@@ -1,4 +1,9 @@
 # ビルド時の注意点
+## デバイスのバージョンについて
+- 2025年7月から138KのバージョンがDevice Cになったようです．私が2025年10月時点で開発に使用しているのはDevice Bなのですが，Cを使用する場合はGowin EDAのバージョンを最新にしたり，デバイスの設定を'C'にする必要があるようです．詳細については下記あたりを参照して下さい．
+  - https://wiki.sipeed.com/hardware/en/tang/common-doc/get_started/install-the-ide.html
+  - https://wiki.sipeed.com/hardware/en/tang/common-doc/questions
+
 ## config
 - Configulationはimpl/の*.config.jsonに保存されているようなので，特に何もする必要は無いはずですが，もしエラーが出た場合はConfigurationのdual-purpose pinで，SSPI, READY, DONE, CPUをチェックします．
 ![](../images/DualPurposePins.png)

@@ -85,6 +85,7 @@ This document is written mostly in Japanese. If necessary, please use a translat
 - v7でハードディスクにddしたbootloaderがちゃんと動かないような気がします．tapeのブートローダーでブートできます．
 
 ## 開発環境
+- Tang Console 138K Device B (Device Cについては[doc/03_FPGA](doc/03_FPGA.md)参照．)
 - Windows 11
   - KiCAD 8.0.5
   - GOWIN FPGA Designer V1.9.11.02(64-bit)
@@ -106,3 +107,4 @@ This document is written mostly in Japanese. If necessary, please use a translat
 - 2025/09/26: 20250926版公開．(RT-11 v4起動)
 - 2025/10/19: 20251017版公開．(磁気テープ実装, unix v7, 2.9BSD起動)
 - 2025/10/19: ドキュメント構成見直し
+- 2025/10/26: [doc/03_FPGA](doc/03_FPGA.md)にDevice Cに関するメモを追加．
