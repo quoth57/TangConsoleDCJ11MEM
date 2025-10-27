@@ -31,13 +31,13 @@
 
 ## 関連記事
 - [きょうのかんぱぱ](https://kanpapa.com/today/)
-TangNanoDCJ11MEMを使って私がやっていないようなことまでやっていたり，ここのREADMEより詳しく解説されてたりします．
+Tang{Nano, Console}DCJ11MEMを使って私がやっていないようなことまでやっていたり，ここのREADMEより詳しく解説されてたりします．
   - [TangNanoDCJ11MEMでPDP-11のCPUを動かしてみました 製作編](https://kanpapa.com/today/2024/07/pdp-11-dcj11-cpu-1.html), 
   - [TangNanoDCJ11MEMでPDP-11のCPUを動かしてみました bare metal編](https://kanpapa.com/today/2024/07/tangnanodcj11mem-pdp-11-cpu-2-bare-metal.html)
   - [TangNanoDCJ11MEMとPDP11GUIでPDP-11 BASICを動かしてみました](https://kanpapa.com/today/2024/08/tangnanodcj11mem-pdp-11-cpu-3-pdp11basic.html)
   - [PDP-11 DCJ11 CPUでUNIX v6を動かしてみました](https://kanpapa.com/today/2024/08/tangnanodcj11mem-pdp-11-cpu-4-unix-v6.html)
   - [PDP-11 DCJ11 CPUでMINI-UNIXを動かしてみました](https://kanpapa.com/today/2024/08/tangnanodcj11mem-pdp-11-dcj11-cpu-mini-unix.html)
-
+  - [TangConsoleDCJ11MEMを組み立てました](https://kanpapa.com/2025/10/pdp-11-tangconsole-dcj11-mem-1.html)
 ## その他のDCJ-11関連のプロジェクト
 - ushicow, [PDP-11 Card for Apple II の制作](https://note.com/ushicow/m/ma9f73d2251bc)
 - VARIABITS LAB, [DCJ11](https://www.variabits.com/categories/dcj11/)
