@@ -42,7 +42,10 @@ REG_SWR = 'o173700; // UNIX V1 multi user mode
 `MEM('o100004,'o010040);// mov r0, -(r0)       ; MTBRC=-05252
 `MEM('o100006,'o012740);// mov #READ+GO, -(r0) ; MTC  =READ+GO;
 `MEM('o100010,'o060003);//                     ;
-`MEM('o100012,'o000000);// halt                ; halt
+`MEM('o100012,'o005000);// clr r0              ; unit number
+`MEM('o100014,'o012701);// mov #177252,r1      ; CSR addr of TM11
+`MEM('o100016,'o172522);//
+`MEM('o100020,'o000000);// halt                ; halt
 //`MEM('o100012,'o000777);// br .                ; jump to .
 //`MEM('o100012,'o005007);// clr pc              ; jump to 0
 
