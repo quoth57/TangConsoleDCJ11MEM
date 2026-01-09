@@ -389,6 +389,7 @@ module top(
   parameter ADRS_XCSR = 18'o777564; // Console send status (aka TPS)
   parameter ADRS_XBUF = 18'o777566; // Console send buffer (aka TPB)
   parameter ADRS_SWR  = 18'o777570; // Console Switch Register
+  parameter ADRS_SMR  = 18'o777750; // KDJ-11 system maintenance register
 
   reg		 RCSR_ID;                    // bit6 (Interrupt Enabe on DONE)
   wire		 RCSR_DONE  = rx_data_ready; // bit7
@@ -609,6 +610,7 @@ module top(
        (address == ADRS_XBUF) ? {8'b0, XBUF}:
 
        (address == ADRS_SWR)  ? REG_SWR:
+       (address == ADRS_SMR)  ? 16'b0000000000010000:
 	       // RF
        (address == ADRS_RF_DCS) ? {8'b0, RF_READY, REG_RF_DCS[6:1], 1'b0}:
        (address == ADRS_RF_WC)  ? REG_RF_WC:
