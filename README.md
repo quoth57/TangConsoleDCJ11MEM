@@ -14,7 +14,7 @@ This document is written mostly in Japanese. If necessary, please use a translat
 - 以前の話題は[更新ログ](doc/01_updatelog.md)参照
 - 2025/10/17
   - 磁気テープリーダ(TM11)等を実装してunix v7や2.9BSDをインストール可能なバージョン(20251017)を公開しました．わりと大幅なアップデートです．
-  - ブートローダーのアドレスを実物のROM(BM873-YA)に準拠させるように変更しました．主なアドレスは下記のようになっています．詳細は[doc/06-1-bootloader.md](doc/06-1-bootloader.md)を参照して下さい．
+  - ブートローダーのアドレスを実物のROM(BM873-YA)に準拠させるように変更しました．主なアドレスは下記のようになっています．詳細は[doc/06-1-bootloader.md](doc/06-1_bootloader.md)を参照して下さい．
     - RK(unix v1): 773700
     - RP(unix v6, RT-11等): 773010
   - 説明文書を[doc/](./doc/)にまとめました．まだログファイルそのままだったりソースのコメントのコピペばかりですが，動かすのに必要な情報は揃っていると思います．気が向いたらもう少し書き直します．
