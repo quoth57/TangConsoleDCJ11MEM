@@ -724,16 +724,31 @@ module top(
 //---------------------------------------------------------------------------
 // Bus error
 // read 760000-760077   (for unix v6)
+// read 770200          (for 2.11BSD)
 // read 777700          (for Microdiagnostic test 2)
 // read 772440 (MTSC1)  (for unix v7 tape boot)
 //---------------------------------------------------------------------------
+  reg bus_error = 0;
+  integer cnt_abort;
+  parameter ABORT_LEN = 2;
   assign ABORT_n = bus_error ? 1'b0 : 1'bz; // simulate open collector output
 
-  wire bus_error =
-       ((address       == 18'o777700) & bus_read) | // Microdiagnostic test 2
-       ((address[17:6] == 12'o7600)   & bus_read) | // read 760000-760077
-       ((address       == 18'o772440) & bus_read 
-	& ~flag_rt11_workaround) ; // MTSC1 (TU16)
+  always @(posedge sys_clk)
+    if (ALE_n == 0 && bus_error == 0 &&
+	(((address       == 18'o770200) & bus_read) || // UNIBUS map register
+	 ((address       == 18'o777700) & bus_read) || // Microdiagnostic test 2
+	 ((address[17:6] == 12'o7600)   & bus_read) || // read 760000-760077
+	 ((address       == 18'o772440) & bus_read 
+ 	  & ~flag_rt11_workaround))) begin // MTSC1 (TU16)
+       bus_error <= 1;
+       cnt_abort <= 1;
+    end
+    else if (bus_error == 1 && cnt_abort < ABORT_LEN)
+      cnt_abort <= cnt_abort + 1;
+    else if (bus_error == 1 && (cnt_abort == ABORT_LEN || INIT_n == 0 || CONT_n == 0)) begin
+      bus_error <= 0;
+      cnt_abort <= 1;
+    end
 
 //---------------------------------------------------------------------------
 // Memory
