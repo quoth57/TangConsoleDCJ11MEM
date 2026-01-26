@@ -730,7 +730,7 @@ module top(
 //---------------------------------------------------------------------------
   reg bus_error = 0;
   integer cnt_abort;
-  parameter ABORT_LEN = 2;
+  parameter ABORT_LEN = 3;
   assign ABORT_n = bus_error ? 1'b0 : 1'bz; // simulate open collector output
 
   always @(posedge sys_clk)
