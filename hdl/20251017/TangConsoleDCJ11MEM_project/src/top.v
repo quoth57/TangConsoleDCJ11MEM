@@ -139,7 +139,10 @@ module top(
 
     output	  led_b,
     output	  led_r,
-    output	  LED_RGB
+    output	  LED_RGB,
+
+    input         BS0,
+    input         BS1
 
 //    output [3:0]  dbg
     );
@@ -729,8 +732,9 @@ module top(
 // read 772440 (MTSC1)  (for unix v7 tape boot)
 //---------------------------------------------------------------------------
   reg bus_error = 0;
+  reg non_stretched = 0;
   integer cnt_abort;
-  parameter ABORT_LEN = 3;
+  parameter ABORT_LEN = 2;
   assign ABORT_n = bus_error ? 1'b0 : 1'bz; // simulate open collector output
 
   always @(posedge sys_clk)
@@ -740,15 +744,22 @@ module top(
 	 ((address[17:6] == 12'o7600)   & bus_read) || // read 760000-760077
 	 ((address       == 18'o772440) & bus_read 
  	  & ~flag_rt11_workaround))) begin // MTSC1 (TU16)
+       if (BS0 == 0 && BS1 == 0) begin
+	  cnt_abort <= 1;
+	  non_stretched <= 1;
+       end
+       else
+	  non_stretched <= 0;
        bus_error <= 1;
-       cnt_abort <= 1;
     end
-    else if (bus_error == 1 && cnt_abort < ABORT_LEN)
-      cnt_abort <= cnt_abort + 1;
-    else if (bus_error == 1 && (cnt_abort == ABORT_LEN || INIT_n == 0 || CONT_n == 0)) begin
-      bus_error <= 0;
-      cnt_abort <= 1;
-    end
+    else if (bus_error == 1)
+       if (non_stretched == 1)
+	  if (cnt_abort < ABORT_LEN)
+	    cnt_abort <= cnt_abort + 1;
+	  else
+	    bus_error <= 0;
+       else if (INIT_n == 0 || CONT_n == 0)
+	 bus_error <= 0;
 
 //---------------------------------------------------------------------------
 // Memory
