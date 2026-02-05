@@ -1424,9 +1424,9 @@ module top(
 //--------------------------------------------------------------------------
   always @(posedge sys_clk or negedge RESET_n)
     if( ~RESET_n )
-      {mt_read, mt_write, mt_nop, TM_go_clear} <= 0;
+      {mt_read, mt_write, mt_nop, mt_spf, mt_spr, mt_rew, TM_go_clear} <= 0;
     else if( mt_busy )
-      {mt_read, mt_write, mt_nop, TM_go_clear} <= 0;
+      {mt_read, mt_write, mt_nop, mt_spf, mt_spr, mt_rew, TM_go_clear} <= 0;
     else if( TM_go ) begin
        TM_go_clear <= 1'b1;
        sd2_disk_block_address <= {4'b0000, TM_disk_block_address};
@@ -1441,10 +1441,10 @@ module top(
 	 MTC_WRITE:     mt_write <= 1'b1;
 `endif
 	 MTC_WRITE_EOF: mt_nop   <= 1'b1; // not implemented
-	 MTC_SPACE_F:   mt_nop   <= 1'b1;
-	 MTC_SPACE_R:   mt_nop   <= 1'b1;
 	 MTC_WRITE_EXT: mt_nop   <= 1'b1; // not implemented
-	 MTC_REWIND:    mt_nop   <= 1'b1;
+	 MTC_SPACE_F:   {mt_nop, mt_spf} <= 2'b11;
+	 MTC_SPACE_R:   {mt_nop, mt_spr} <= 2'b11;
+	 MTC_REWIND:    {mt_nop, mt_rew} <= 2'b11;
 	 default:; // cannot reach here
        endcase
     end
@@ -1632,6 +1632,11 @@ module top(
   reg [19:0]  TM_POS = 0;
   reg [3:0]   TM_FILENUM = 0;
   parameter   TM_MAXFILES = 4'd15;
+  // TM11 tape driver of 2BSD uses this magic number
+  // to implement 'mt {fsf, bsf} n'.
+  // TM_INF is considerd to be large enough to hit EOF.
+  // Also, boot program of 2BSD uses 0 as magic number.
+  parameter   TM_INF = 16'd32760;
   
   always @(posedge sys_clk or negedge RESET_n)
     if( ~RESET_n ) begin
@@ -1672,19 +1677,27 @@ module top(
 		 {TM_FILENUM, TM_POS} <= 0;
 	      end
 	      MTC_SPACE_F: begin
-		 // I'm not sure this is correct,
-		 // but it works for unix v7 'mt -t /dev/nrmt0 fsf n'
-		 // which calls SPACE_F with MTBRC='o100010
-		 TM_FILENUM <= (TM_FILENUM - REG_MTBRC[2:0] + 1'd1) 
-		   & TM_MAXFILES;
-//		 TM_FILENUM <= (TM_FILENUM - REG_MTBRC) & TM_MAXFILES;
-		 TM_POS <= 0;
+		 // seek by file
+		 if (REG_MTBRC == 0 || REG_MTBRC == -TM_INF) begin
+		   TM_FILENUM <= (TM_FILENUM + 1'd1) & TM_MAXFILES;
+		   TM_POS <= 0;
+		 end
+		 // seek by record
+		 else
+		   // record length should be 1024.
+		   TM_POS <= TM_POS + (((~REG_MTBRC+1'd1)<<1) & 15'h7FFF);
 		 REG_MTBRC <= 0;
 	      end
 	      MTC_SPACE_R: begin
-		 if( (TM_POS == 0) & (TM_FILENUM != 0))
-		   TM_FILENUM <= (TM_FILENUM + REG_MTBRC[2:0]) & TM_MAXFILES;
-		 TM_POS <= 0;
+		 // seek by file
+		 if (REG_MTBRC == 0 || REG_MTBRC == -TM_INF) begin
+		   TM_FILENUM <= (TM_FILENUM - 1'd1) & TM_MAXFILES;
+		   TM_POS <= 0;
+		 end
+		 // seek by record
+		 else
+		   // record length should be 1024.
+		   TM_POS <= TM_POS - (((~REG_MTBRC+1'd1)<<1) & 15'h7FFF);
 		 REG_MTBRC <= 0;
 	      end
 	      MTC_REWIND:
@@ -2119,6 +2132,9 @@ module top(
   reg	      mt_read;
   reg	      mt_write;
   reg	      mt_nop;
+  reg	      mt_spf;
+  reg	      mt_spr;
+  reg	      mt_rew;
   wire	      mt_ready;
   wire	      mt_busy = ~mt_ready;
   wire [4:0]  mt_state;
@@ -2791,6 +2807,12 @@ module top(
 	   dbg_regw <= "MR";
 	 else if(mt_write)
 	   dbg_regw <= "MW";
+	 else if(mt_spf)
+	   dbg_regw <= "Mf";
+	 else if(mt_spr)
+	   dbg_regw <= "Mr";
+	 else if(mt_rew)
+	   dbg_regw <= "Mw";
 	 else
 	   dbg_regw <= "MN";
 	 dbg_reg0 <= REG_MTC;
