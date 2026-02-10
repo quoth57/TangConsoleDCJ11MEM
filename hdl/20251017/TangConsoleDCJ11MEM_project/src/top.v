@@ -139,10 +139,7 @@ module top(
 
     output	  led_b,
     output	  led_r,
-    output	  LED_RGB,
-
-    input         BS0,
-    input         BS1
+    output	  LED_RGB
 
 //    output [3:0]  dbg
     );
