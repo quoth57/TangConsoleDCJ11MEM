@@ -744,22 +744,15 @@ module top(
 	 ((address[17:6] == 12'o7600)   & bus_read) || // read 760000-760077
 	 ((address       == 18'o772440) & bus_read 
  	  & ~flag_rt11_workaround))) begin // MTSC1 (TU16)
-       if (BS0 == 0 && BS1 == 0) begin
-	  cnt_abort <= 1;
-	  non_stretched <= 1;
-       end
-       else
-	  non_stretched <= 0;
+       cnt_abort <= 1;
+       non_stretched <= 1;
        bus_error <= 1;
     end
     else if (bus_error == 1)
-       if (non_stretched == 1)
-	  if (cnt_abort < ABORT_LEN)
-	    cnt_abort <= cnt_abort + 1;
-	  else
-	    bus_error <= 0;
-       else if (INIT_n == 0 || CONT_n == 0)
-	 bus_error <= 0;
+      if (cnt_abort < ABORT_LEN)
+	cnt_abort <= cnt_abort + 1;
+      else
+	bus_error <= 0;
 
 //---------------------------------------------------------------------------
 // Memory
