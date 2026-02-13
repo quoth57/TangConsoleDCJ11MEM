@@ -729,7 +729,6 @@ module top(
 // read 772440 (MTSC1)  (for unix v7 tape boot)
 //---------------------------------------------------------------------------
   reg bus_error = 0;
-  reg non_stretched = 0;
   integer cnt_abort;
   parameter ABORT_LEN = 2;
   assign ABORT_n = bus_error ? 1'b0 : 1'bz; // simulate open collector output
@@ -742,7 +741,6 @@ module top(
 	 ((address       == 18'o772440) & bus_read 
  	  & ~flag_rt11_workaround))) begin // MTSC1 (TU16)
        cnt_abort <= 1;
-       non_stretched <= 1;
        bus_error <= 1;
     end
     else if (bus_error == 1)
