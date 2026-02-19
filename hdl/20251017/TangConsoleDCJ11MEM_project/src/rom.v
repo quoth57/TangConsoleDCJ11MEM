@@ -39,17 +39,17 @@ REG_SWR = 'o173700; // UNIX V1 multi user mode
 //---------------------------------------------------------------
 `MEM('o100000,'o012700);// mov #172526, r0     ; r0=MTBRC+2
 `MEM('o100002,'o172526);//                     ;
-`MEM('o100004,'o012701);// mov #-^D512         ;
+`MEM('o100004,'o012701);// mov #-^D512, r1     ;
 `MEM('o100006,'o177000);//                     ;
 `MEM('o100010,'o010140);// mov r1, -(r0)       ; MTBRC=-512
 `MEM('o100012,'o012740);// mov #READ+GO, -(r0) ; MTC=READ+GO;
 `MEM('o100014,'o060003);//                     ;
 `MEM('o100016,'o005000);// clr r0              ; unit number
-`MEM('o100020,'o012701);// mov #172522,r1      ; CSR addr of TM11
+`MEM('o100020,'o012701);// mov #172522, r1     ; CSR addr of TM11
 `MEM('o100022,'o172522);//
 `MEM('o100024,'o000000);// halt                ; halt
-//`MEM('o100012,'o000777);// br .                ; jump to .
-//`MEM('o100012,'o005007);// clr pc              ; jump to 0
+//`MEM('o100024,'o000777);// br .                ; jump to .
+//`MEM('o100024,'o005007);// clr pc              ; jump to 0
 
 // set 040 to SWR
 `MEM('o100040,'o012737); // mov #000040, @#777570
