@@ -38,6 +38,9 @@ Tang{Nano, Console}DCJ11MEMを使って私がやっていないようなこと�
   - [PDP-11 DCJ11 CPUでUNIX v6を動かしてみました](https://kanpapa.com/today/2024/08/tangnanodcj11mem-pdp-11-cpu-4-unix-v6.html)
   - [PDP-11 DCJ11 CPUでMINI-UNIXを動かしてみました](https://kanpapa.com/today/2024/08/tangnanodcj11mem-pdp-11-dcj11-cpu-mini-unix.html)
   - [TangConsoleDCJ11MEMを組み立てました](https://kanpapa.com/2025/10/pdp-11-tangconsole-dcj11-mem-1.html)
+- [引退OSエンジニアの遊び場](https://offrepose.blogspot.com/) by 剛洲賭雷太
+  - [TangConsoleDCJ11MEMへの2.11BSDのインストール](https://offrepose.blogspot.com/2026/02/tangconsoledcj11mem211bsd.html)
+
 ## その他のDCJ-11関連のプロジェクト
 - ushicow, [PDP-11 Card for Apple II の制作](https://note.com/ushicow/m/ma9f73d2251bc)
 - VARIABITS LAB, [DCJ11](https://www.variabits.com/categories/dcj11/)
