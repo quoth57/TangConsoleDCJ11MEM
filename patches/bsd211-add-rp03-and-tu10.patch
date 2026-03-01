@@ -1,0 +1,346 @@
+commit 969dd21c75b5fed23c8fa650a156364ecadbe5b8
+Author: Takao Shinohara <anakha@f7.dion.ne.jp>
+Date:   Sun Mar 1 17:22:29 2026 +0900
+
+    add RP03 and TU10.
+
+diff --git a/sys/conf/Make.pdpuba b/sys/conf/Make.pdpuba
+index de40445..33a57f6 100644
+--- a/sys/conf/Make.pdpuba
++++ b/sys/conf/Make.pdpuba
+@@ -14,11 +14,11 @@
+ U=	../pdpuba
+ VPATH=	../pdpuba
+ 
+-CFILES=	${U}/br.c ${U}/dh.c ${U}/dn.c ${U}/dhu.c ${U}/dhv.c ${U}/dkbad.c \
++CFILES=	${U}/rp.c ${U}/dh.c ${U}/dn.c ${U}/dhu.c ${U}/dhv.c ${U}/dkbad.c \
+ 	${U}/dr.c ${U}/dz.c ${U}/hk.c ${U}/ht.c ${U}/lp.c ${U}/ra.c ${U}/rk.c \
+ 	${U}/rl.c ${U}/rx.c ${U}/si.c ${U}/tm.c ${U}/tmscp.c ${U}/tmscpdump.c \
+ 	${U}/ts.c ${U}/xp.c
+-OBJS=	br.o dh.o dhu.o dhv.o dkbad.o dn.o dr.o dz.o hk.o ht.o lp.o ra.o rk.o \
++OBJS=	rp.o dh.o dhu.o dhv.o dkbad.o dn.o dr.o dz.o hk.o ht.o lp.o ra.o rk.o \
+ 	rl.o rx.o si.o tm.o tmscp.o tmscpdump.o ts.o xp.o dn.o
+ 
+ .c.o:
+diff --git a/sys/conf/Make.sunix b/sys/conf/Make.sunix
+index 8ff1944..c096362 100644
+--- a/sys/conf/Make.sunix
++++ b/sys/conf/Make.sunix
+@@ -45,7 +45,7 @@ CONF=	scb.o \
+ 	mch_dump.o mch_dzpdma.o mch_profile.o mch_start.o \
+ 	mch_trap.o mch_vars.o mch_xxx.o conf.o ioconf.o boot.o
+ 
+-BASE=	br.o dh.o dhu.o dhv.o dkbad.o dr.o dz.o init_sysent.o kern_clock.o \
++BASE=	rp.o dh.o dhu.o dhv.o dkbad.o dr.o dz.o init_sysent.o kern_clock.o \
+ 	kern_descrip.o kern_mman.o kern_proc.o kern_sig.o kern_subr.o \
+ 	kern_prot2.o kern_synch.o lp.o machdep.o ra.o ram.o si.o \
+ 	subr_rmap.o subr_xxx.o sys_inode.o trap.o tty.o \
+diff --git a/sys/conf/SMALL b/sys/conf/SMALL
+index c0606e3..0d58069 100644
+--- a/sys/conf/SMALL
++++ b/sys/conf/SMALL
+@@ -139,7 +139,7 @@ DIAGNOSTIC	NO			# misc. diagnostic loops and checks
+ # PERIPHERALS: DISK DRIVES		#
+ #########################################
+ 
+-NBR		1		# EATON BR1537/BR1711, BR1538A, B, C, D
++NRP		4		# RP03
+ 
+ NHK		0		# RK611, RK06/07
+ 
+diff --git a/sys/conf/config b/sys/conf/config
+index 53b8ac8..17765ba 100755
+--- a/sys/conf/config
++++ b/sys/conf/config
+@@ -233,9 +233,9 @@ if [ $DUMPROUTINE = rldump ]; then
+ 	echo "#define RL_DUMP 1"	>> ../$MACHINE/rl.h
+ fi
+ 
+-echo "#define NBR	$NBR"		> ../$MACHINE/br.h
+-if [ $DUMPROUTINE = brdump ]; then
+-	echo "#define BR_DUMP 1"	>> ../$MACHINE/br.h
++echo "#define NRP	$NRP"		> ../$MACHINE/rp.h
++if [ $DUMPROUTINE = rpdump ]; then
++	echo "#define RP_DUMP 1"	>> ../$MACHINE/rp.h
+ fi
+ 
+ echo "#define NSI	$NSI"		> ../$MACHINE/si.h
+diff --git a/sys/pdp/conf.c b/sys/pdp/conf.c
+index d54039b..fdfc401 100644
+--- a/sys/pdp/conf.c
++++ b/sys/pdp/conf.c
+@@ -69,17 +69,17 @@ daddr_t	xpsize();
+ #define	xpsize		NULL
+ #endif
+ 
+-#include "br.h"
+-#if NBR > 0
+-int	bropen(), brstrategy(), brroot();
+-daddr_t	brsize();
+-#define	brclose		nulldev
++#include "rp.h"
++#if NRP > 0
++int	rpopen(), rpstrategy(), rproot();
++#define	rpsize		NULL
++#define	rpclose		nulldev
+ #else
+-#define	bropen		nodev
+-#define	brclose		nodev
+-#define	brroot		nulldev
+-#define	brstrategy	nodev
+-#define	brsize		NULL
++#define	rpopen		nodev
++#define	rpclose		nodev
++#define	rproot		nulldev
++#define	rpstrategy	nodev
++#define	rpsize		NULL
+ #endif
+ 
+ #include "ht.h"
+@@ -206,8 +206,8 @@ struct bdevsw	bdevsw[] = {
+ /* xp = 10 */
+ 	xpopen,		xpclose,	xpstrategy,	xproot,		xpsize,
+ 	0,
+-/* br = 11 */
+-	bropen,		brclose,	brstrategy,	brroot,		brsize,
++/* rp = 11 */
++	rpopen,		rpclose,	rpstrategy,	rproot,		rpsize,
+ 	0,
+ /* tmscp = 12 (tu81/tk50) */
+ 	tmscpopen,	tmscpclose,	tmscpstrategy,	nulldev,	NULL,
+@@ -438,10 +438,10 @@ struct cdevsw	cdevsw[] = {
+ 	xpopen,		xpclose,	rawrw,		rawrw,
+ 	xpioctl,	nulldev,	0,		seltrue,
+ 	xpstrategy,
+-/* br = 20 */
+-	bropen,		brclose,	rawrw,		rawrw,
++/* rp = 20 */
++	rpopen,		rpclose,	rawrw,		rawrw,
+ 	nodev,		nulldev,	0,		seltrue,
+-	brstrategy,
++	rpstrategy,
+ /* dn = 21 */
+ 	dnopen,		dnclose,	dnread,		dnwrite,
+ 	dnioctl,	nulldev,	0,		seltrue,
+@@ -503,7 +503,7 @@ isdisk(dev, type)
+ 	case 8:			/* rx */
+ 	case 9:			/* si */
+ 	case 10:		/* xp */
+-	case 11:		/* br */
++	case 11:		/* rp */
+ 		if (type == IFBLK)
+ 			return (1);
+ 		return (0);
+@@ -514,7 +514,7 @@ isdisk(dev, type)
+ 	case 17:		/* rrx */
+ 	case 18:		/* rsi */
+ 	case 19:		/* rxp */
+-	case 20:		/* rbr */
++	case 20:		/* rrp */
+ 		if (type == IFCHR)
+ 			return (1);
+ 		/* fall through */
+@@ -547,7 +547,7 @@ static char chrtoblktbl[MAXDEV] =  {
+ 	/* 17 */	8,		/* rx */
+ 	/* 18 */	9,		/* si */
+ 	/* 19 */	10,		/* xp */
+-	/* 20 */	11,		/* br */
++	/* 20 */	11,		/* rp */
+ 	/* 21 */	NODEV,
+ 	/* 22 */	NODEV,
+ 	/* 23 */	12,		/* tmscp */
+diff --git a/sys/pdp/scb.s b/sys/pdp/scb.s
+index f648dae..8a06ddc 100644
+--- a/sys/pdp/scb.s
++++ b/sys/pdp/scb.s
+@@ -28,7 +28,7 @@
+ #include "ra.h"
+ #include "rk.h"
+ #include "rl.h"
+-#include "br.h"
++#include "rp.h"
+ #include "rx.h"
+ #include "si.h"
+ #include "sri.h"
+@@ -153,14 +153,17 @@ SETDOT(114)
+ 	DEVTRAP(220,	rkintr,	br5)
+ #endif
+ 
++#if NTM > 0				/* TM-11 */
++	DEVTRAP(224,	tmintr, br5)
++#endif
+ 
+ SETDOT(240)
+ 	TRAP(trap,	br7+T_PIRQ)		/* program interrupt request */
+ 	TRAP(trap,	br7+T_ARITHTRAP)	/* floating point */
+ 	TRAP(trap,	br7+T_SEGFLT)		/* segmentation violation */
+ 
+-#if NBR > 0
+-	DEVTRAP(254,	brintr, br5)	/* EATON BR1537 or EATON BR1711 */
++#if NRP > 0
++	DEVTRAP(254,	rpintr, br5)	/* RP03 */
+ #endif
+ 
+ #if NXPD > 0				/* RM02/03/05, RP04/05/06 */
+@@ -352,8 +355,8 @@ do_panic:
+ 	HANDLER(rkintr)
+ #endif
+ 
+-#if NBR > 0
+-	HANDLER(brintr)			/* EATON BR1537/BR1711 */
++#if NRP > 0
++	HANDLER(rpintr)			/* RP03 */
+ #endif
+ 
+ #if NXPD > 0				/* RM02/03/05, RP04/05/06 */
+diff --git a/sys/pdpuba/rp.c b/sys/pdpuba/rp.c
+index 8242ce4..d292e33 100644
+--- a/sys/pdpuba/rp.c
++++ b/sys/pdpuba/rp.c
+@@ -27,10 +27,23 @@ struct rpdevice *addr;
+ #include "buf.h"
+ #include "conf.h"
+ #include "user.h"
++#include "dk.h"
++#include "disk.h"
+ #include "rpreg.h"
++#include "syslog.h"
++#include "map.h"
++#include "uba.h"
+ 
+ struct	rpdevice *RPADDR = (struct rpdevice *)0176710;
+ 
++/*
++ * Structure of the disk driver partition tables
++ */
++struct  size    {
++        daddr_t nblocks;
++        short   cyloff;
++};
++
+ #ifdef SHOULD_WORK_BUT_DOESN'T
+ /*
+  * Apparently, some controllers have problems getting to the "spare*
+@@ -61,21 +74,54 @@ struct	size rp_sizes[] = {
+ 
+ struct	buf	rptab;
+ 
++#ifdef	SOFUB_MAP
++	static	int	rpsoftmap = -1;	/* -1 = OK to check for softmap
++					 *  0 = Never use softmap
++					 *  1 = Always use softmap
++					*/
++#endif
++
+ #define	RP_NSECT	10
+ #define	RP_NTRAC	20
++#define rpunit(dev)     (dkunit(dev) & 7)
++
++rproot(csr)
++register struct rpdevice *csr;
++{
++
++        if (!csr)                                       /* XXX */
++                csr = (struct rpdevice *)0176710;       /* XXX */
++        rpattach(csr, 0);
++}
+ 
+ rpattach(addr, unit)
+ struct rpdevice *addr;
+ {
+ 	if (unit != 0)
+ 		return(0);
++#ifdef	SOFUB_MAP
++	if	(!ubmap && rpsoftmap == -1)
++		rpsoftmap = 1;
++#endif
+ 	RPADDR = addr;
+ 	return(1);
+ }
+ 
++rpopen(dev, flag)
++        dev_t dev;
++        int flag;
++{
++        register int unit = rpunit(dev);
++
++        if (unit >= NRP || !RPADDR)
++                return (ENXIO);
++        return (0);
++}
++
+ rpstrategy(bp)
+ register struct	buf *bp;
+ {
++	register int s;
+ 	register struct buf *dp;
+ 	register int unit;
+ 	long	sz;
+@@ -94,10 +140,18 @@ errexit:
+ 		iodone(bp);
+ 		return;
+ 	}
++#ifdef	SOFUB_MAP
++	if	(rpsoftmap == 1)
++		{
++		if	(sofub_alloc(bp) == 0)
++			return;
++		}
++	else
++#endif
+ 	mapalloc(bp);
+ 	bp->av_forw = NULL;
+ 	unit >>= 3;
+-	(void) _spl5();
++	s = splbio();
+ 	dp = &rptab;
+ 	if (dp->b_actf == NULL)
+ 		dp->b_actf = bp;
+@@ -106,7 +160,7 @@ errexit:
+ 	dp->b_actl = bp;
+ 	if (dp->b_active == NULL)
+ 		rpstart();
+-	(void) _spl0();
++	splx(s);
+ }
+ 
+ rpstart()
+@@ -171,13 +225,9 @@ rpintr()
+ 			printf("rp%d: write locked\n", minor(bp->b_dev));
+ 		else
+ 			{
+-#ifdef	UCB_DEVERR
+ 			harderr(bp, "rp");
+ 			printf("er=%b ds=%b\n", rpaddr->rper, RPER_BITS,
+ 				rpaddr->rpds, RPDS_BITS);
+-#else
+-			deverror(bp, rpaddr->rper, rpaddr->rpds);
+-#endif
+ 			if(rpaddr->rpds & (RPDS_SUFU | RPDS_SUSI | RPDS_HNF)) {
+ 				rpaddr->rpcs.c[0] = RP_HSEEK | RP_GO;
+ 				ctr = 0;
+@@ -198,6 +248,10 @@ rpintr()
+ 	rptab.b_errcnt = 0;
+ 	rptab.b_actf = bp->av_forw;
+ 	bp->b_resid = -(rpaddr->rpwc << 1);
++#ifdef	SOFUB_MAP
++	if	(rpsoftmap == 1)
++		sofub_relse(bp, bp->b_bcount - bp->b_resid);
++#endif
+ 	iodone(bp);
+ 	rpstart();
+ }
+diff --git a/sys/sys/init_main.c b/sys/sys/init_main.c
+index 5955e6d..56a8785 100644
+--- a/sys/sys/init_main.c
++++ b/sys/sys/init_main.c
+@@ -149,6 +149,9 @@ main()
+ 	(void)(*bdevsw[major(bootdev)].d_root)(bootcsr);
+ 	(void)(*bdevsw[major(swapdev)].d_root)((caddr_t) 0);	/* XXX */
+ 
++	(void)(*bdevsw[11].d_root)((caddr_t) 0);	/* XXX: RP03 */
++	(void)tmattach(0172520, 0);			/* XXX: TM11 */
++
+ /*
+  * Now we find out how much swap space is available.  Since 'nswap' is
+  * a "u_int" we have to restrict the amount of swap to 65535 sectors (~32mb).
