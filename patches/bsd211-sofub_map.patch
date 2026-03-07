@@ -1,0 +1,44 @@
+commit ced44be96961a1617ef12d60962e38ce889a4558
+Author: Takao Shinohara <anakha@f7.dion.ne.jp>
+Date:   Fri Mar 6 09:02:17 2026 +0900
+
+    change bounce buffer size for swap.
+
+diff --git a/sys/pdp/machdep.c b/sys/pdp/machdep.c
+index 3cff738..7c81698 100644
+--- a/sys/pdp/machdep.c
++++ b/sys/pdp/machdep.c
+@@ -271,7 +271,7 @@ mapfree(bp)
+ 	}
+ }
+ 
+-#define	SOFUB_DEBUG
++#undef	SOFUB_DEBUG
+ 
+ #ifdef	SOFUB_MAP
+ /*
+@@ -330,8 +330,8 @@ register struct buf *bp;
+ 		return(1);	/* okay, < 256kb	*/
+ 	else if	(bp->b_bcount > sofub_size)
+ 		{
+-		log(LOG_ERR, "I/O >10kb on %d,%d\n",
+-			major(bp->b_dev),minor(bp->b_dev));
++		log(LOG_ERR, "I/O >10kb on %d,%d count=%d\n",
++			major(bp->b_dev),minor(bp->b_dev), bp->b_bcount);
+ 		bp->b_flags |= B_ERROR;
+ 		bp->b_error = EFAULT;
+ 		iodone(bp);
+diff --git a/sys/pdp/machdep2.c b/sys/pdp/machdep2.c
+index 2c24829..d41b81b 100644
+--- a/sys/pdp/machdep2.c
++++ b/sys/pdp/machdep2.c
+@@ -161,7 +161,8 @@ startup()
+ */
+ 
+ #ifdef	SOFUB_MAP
+-#define	B	(10240+64)
++#define	B	(1024*60)
++#endif
+ 
+ 	sofub_size = (unsigned) B;
+ 

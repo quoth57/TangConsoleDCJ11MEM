@@ -118,7 +118,7 @@ module top(
     input	  sd2_det_n,
 	   
     inout [15:0]  DAL,
-    input [17:16] DALH,	     // DAL[17:16] is input (not inout)
+    input [19:16] DALH,	     // DAL[19:16] is input (not inout)
     input [3:0]	  AIO,
 //    input [1:0]	  BS,
     output	  IRQ0,
@@ -222,19 +222,19 @@ module top(
 //---------------------------------------------------------------------------
 // RF11 (drum) disk controller
 //---------------------------------------------------------------------------
-  parameter ADRS_RF_DCS  = 18'o777460; // Disk Control Status Register
+  parameter ADRS_RF_DCS  = 20'o3777460; // Disk Control Status Register
     parameter RF_DCS_GO          = 1'b1;  // [0]
     parameter RF_DCS_NOP         = 2'b00; // [2:1]
     parameter RF_DCS_WRITE       = 2'b01; // [2:1]
     parameter RF_DCS_READ        = 2'b10; // [2:1]
     parameter RF_DCS_WRITE_CHECK = 2'b11; // [2:1]
-  parameter ADRS_RF_WC   = 18'o777462; // Word Count Register
-  parameter ADRS_RF_CMA  = 18'o777464; // Current Memory Address Register
-  parameter ADRS_RF_DAR  = 18'o777466; // Disk Address Register
-  parameter ADRS_RF_DAE  = 18'o777470; // Disk Address Ext & Error Register
-  parameter ADRS_RF_DBR  = 18'o777472; // Disk Buffer Register
-  parameter ADRS_RF_MAR  = 18'o777474; // Maintenance Register
-  parameter ADRS_RF_ADS  = 18'o777476; // Address of Disk Segment Register
+  parameter ADRS_RF_WC   = 20'o3777462; // Word Count Register
+  parameter ADRS_RF_CMA  = 20'o3777464; // Current Memory Address Register
+  parameter ADRS_RF_DAR  = 20'o3777466; // Disk Address Register
+  parameter ADRS_RF_DAE  = 20'o3777470; // Disk Address Ext & Error Register
+  parameter ADRS_RF_DBR  = 20'o3777472; // Disk Buffer Register
+  parameter ADRS_RF_MAR  = 20'o3777474; // Maintenance Register
+  parameter ADRS_RF_ADS  = 20'o3777476; // Address of Disk Segment Register
 
   reg [15:0] REG_RF_DCS;
   reg [15:0] REG_RF_WC;
@@ -252,9 +252,9 @@ module top(
 //---------------------------------------------------------------------------
 // RK11 disk controller
 //---------------------------------------------------------------------------
-  parameter ADRS_RKDS = 18'o777400; // Disk Control Status Register
-  parameter ADRS_RKER = 18'o777402; // Error Register
-  parameter ADRS_RKCS = 18'o777404; // Control Status Register
+  parameter ADRS_RKDS = 20'o3777400; // Disk Control Status Register
+  parameter ADRS_RKER = 20'o3777402; // Error Register
+  parameter ADRS_RKCS = 20'o3777404; // Control Status Register
     parameter RKCS_GO  = 1'b1;      // [0]
     parameter RKCS_CRESET      = 3'b000;  // [3:1] 'b0001 = 'o001
     parameter RKCS_WRITE       = 3'b001;  // [3:1] 'b0011 = 'o003
@@ -264,11 +264,11 @@ module top(
     parameter RKCS_READ_CHECK  = 3'b101;  // [3:1] 'b1011 = 'o013
     parameter RKCS_DRESET      = 3'b110;  // [3:1] 'b1101 = 'o015
     parameter RKCS_WRITE_LOCK  = 3'b111;  // [3:1] 'b1111 = 'o017
-  parameter ADRS_RKWC = 18'o777406; // Word Count Register
-  parameter ADRS_RKBA = 18'o777410; // Current Bus Address Register
-  parameter ADRS_RKDA = 18'o777412; // Disk Address Register
-  parameter ADRS_RKMR = 18'o777414; // Maintenance Register
-  parameter ADRS_RKDB = 18'o777416; // Disk Buffer Register
+  parameter ADRS_RKWC = 20'o3777406; // Word Count Register
+  parameter ADRS_RKBA = 20'o3777410; // Current Bus Address Register
+  parameter ADRS_RKDA = 20'o3777412; // Disk Address Register
+  parameter ADRS_RKMR = 20'o3777414; // Maintenance Register
+  parameter ADRS_RKDB = 20'o3777416; // Disk Buffer Register
 
   reg [15:0] REG_RKCS;
   reg [15:0] REG_RKWC;
@@ -286,9 +286,9 @@ module top(
 //---------------------------------------------------------------------------
 // RP11 disk controller with RP03 disk pack
 //---------------------------------------------------------------------------
-  parameter ADRS_RPDS = 18'o776710; // Device Status Register
-  parameter ADRS_RPER = 18'o776712; // Error Register
-  parameter ADRS_RPCS = 18'o776714; // Control Status Register
+  parameter ADRS_RPDS = 20'o3776710; // Device Status Register
+  parameter ADRS_RPER = 20'o3776712; // Error Register
+  parameter ADRS_RPCS = 20'o3776714; // Control Status Register
     parameter RPCS_GO  = 1'b1;      // [0]
     parameter RPCS_IDLE         = 3'd0;
     parameter RPCS_WRITE        = 3'd1;
@@ -298,11 +298,11 @@ module top(
     parameter RPCS_WRITE_NOSEEK = 3'd5;
     parameter RPCS_HOME_SEEK    = 3'd6;
     parameter RPCS_READ_NOSEEK  = 3'd7;
-  parameter ADRS_RPWC = 18'o776716; // Word Count
-  parameter ADRS_RPBA = 18'o776720; // Bus Address
-  parameter ADRS_RPCA = 18'o776722; // Cylinder Address
-  parameter ADRS_RPDA = 18'o776724; // Disk Address
-  parameter ADRS_RPM1 = 18'o776726; // (same address as RPDT of RP04)
+  parameter ADRS_RPWC = 20'o3776716; // Word Count
+  parameter ADRS_RPBA = 20'o3776720; // Bus Address
+  parameter ADRS_RPCA = 20'o3776722; // Cylinder Address
+  parameter ADRS_RPDA = 20'o3776724; // Disk Address
+  parameter ADRS_RPM1 = 20'o3776726; // (same address as RPDT of RP04)
 
   reg [15:0] REG_RPCS;
   reg [15:0] REG_RPWC;
@@ -320,7 +320,7 @@ module top(
 //---------------------------------------------------------------------------
 // RH11 disk controller (dummy)
 //---------------------------------------------------------------------------
-  parameter ADRS_RPCS1 = 18'o776700;
+  parameter ADRS_RPCS1 = 20'o3776700;
   reg [15:0] REG_RPCS1 = 0;
 
   always @(posedge sys_clk)
@@ -330,8 +330,8 @@ module top(
 //---------------------------------------------------------------------------
 // TM11 magnetic tape controller
 //---------------------------------------------------------------------------
-  parameter ADRS_MTS = 18'o772520; // Status Register
-  parameter ADRS_MTC = 18'o772522; // Control Status Register
+  parameter ADRS_MTS = 20'o3772520; // Status Register
+  parameter ADRS_MTC = 20'o3772522; // Control Status Register
     parameter MTC_GO = 1'b1;      // [0]
     parameter MTC_OFFLINE   = 3'd0;
     parameter MTC_READ      = 3'd1;
@@ -341,10 +341,10 @@ module top(
     parameter MTC_SPACE_R   = 3'd5; // Space Reverse
     parameter MTC_WRITE_EXT = 3'd6; // Write with extended IRG
     parameter MTC_REWIND    = 3'd7;
-  parameter ADRS_MTBRC = 18'o772524; // Byte Record Counter
-  parameter ADRS_MTCMA = 18'o772526; // Current Memory Address Register
-  parameter ADRS_MTD   = 18'o772530; // Data Buffer Register
-  parameter ADRS_MTRD  = 18'o772532; // TU10 Read Lines
+  parameter ADRS_MTBRC = 20'o3772524; // Byte Record Counter
+  parameter ADRS_MTCMA = 20'o3772526; // Current Memory Address Register
+  parameter ADRS_MTD   = 20'o3772530; // Data Buffer Register
+  parameter ADRS_MTRD  = 20'o3772532; // TU10 Read Lines
 
   wire	     MTS_EOF   = sw2;
   wire	     MTC_ERR   = (mt_error != 0);
@@ -361,15 +361,15 @@ module top(
 //---------------------------------------------------------------------------
 // KE11 Extented Arithmetic Element
 //---------------------------------------------------------------------------
-  parameter  ADRS_KE_DIV = 18'o777300; // Divide
-  parameter  ADRS_KE_AC  = 18'o777302; // Accumulator
-  parameter  ADRS_KE_MQ  = 18'o777304; // Multiplier-Quotient
-  parameter  ADRS_KE_MUL = 18'o777306; // Multiply
-  parameter  ADRS_KE_SC  = 18'o777310; // Step Counter
-  parameter  ADRS_KE_SR  = 18'o777311; // Status Register
-  parameter  ADRS_KE_NOR = 18'o777312; // Normalization
-  parameter  ADRS_KE_LSH = 18'o777314; // Logical Shift
-  parameter  ADRS_KE_ASH = 18'o777326; // Arithmetic Shift
+  parameter  ADRS_KE_DIV = 20'o3777300; // Divide
+  parameter  ADRS_KE_AC  = 20'o3777302; // Accumulator
+  parameter  ADRS_KE_MQ  = 20'o3777304; // Multiplier-Quotient
+  parameter  ADRS_KE_MUL = 20'o3777306; // Multiply
+  parameter  ADRS_KE_SC  = 20'o3777310; // Step Counter
+  parameter  ADRS_KE_SR  = 20'o3777311; // Status Register
+  parameter  ADRS_KE_NOR = 20'o3777312; // Normalization
+  parameter  ADRS_KE_LSH = 20'o3777314; // Logical Shift
+  parameter  ADRS_KE_ASH = 20'o3777326; // Arithmetic Shift
 
   reg [15:0] REG_KE_AC;
   reg [15:0] REG_KE_AC_OUT;
@@ -384,12 +384,12 @@ module top(
 //---------------------------------------------------------------------------
 // Console / KL11 registers
 //---------------------------------------------------------------------------
-  parameter ADRS_RCSR = 18'o777560; // Console read status (aka TKS)
-  parameter ADRS_RBUF = 18'o777562; // Console read buffer (aka TKB)
-  parameter ADRS_XCSR = 18'o777564; // Console send status (aka TPS)
-  parameter ADRS_XBUF = 18'o777566; // Console send buffer (aka TPB)
-  parameter ADRS_SWR  = 18'o777570; // Console Switch Register
-  parameter ADRS_SMR  = 18'o777750; // KDJ-11 system maintenance register
+  parameter ADRS_RCSR = 20'o3777560; // Console read status (aka TKS)
+  parameter ADRS_RBUF = 20'o3777562; // Console read buffer (aka TKB)
+  parameter ADRS_XCSR = 20'o3777564; // Console send status (aka TPS)
+  parameter ADRS_XBUF = 20'o3777566; // Console send buffer (aka TPB)
+  parameter ADRS_SWR  = 20'o3777570; // Console Switch Register
+  parameter ADRS_SMR  = 20'o3777750; // KDJ-11 system maintenance register
 
   reg		 RCSR_ID;                    // bit6 (Interrupt Enabe on DONE)
   wire		 RCSR_DONE  = rx_data_ready; // bit7
@@ -403,10 +403,10 @@ module top(
 //---------------------------------------------------------------------------
 // Papertape Reader/Puncher registers
 //---------------------------------------------------------------------------
-  parameter ADRS_PRS  = 18'o777550; // Papertape Reader Status Register
-  parameter ADRS_PRB  = 18'o777552; // Papertape Reader Buffer
-  parameter ADRS_PPS  = 18'o777554; // Papertape Punch  Status
-  parameter ADRS_PPB  = 18'o777556; // Papertape Punch  Buffer
+  parameter ADRS_PRS  = 20'o3777550; // Papertape Reader Status Register
+  parameter ADRS_PRB  = 20'o3777552; // Papertape Reader Buffer
+  parameter ADRS_PPS  = 20'o3777554; // Papertape Punch  Status
+  parameter ADRS_PPB  = 20'o3777556; // Papertape Punch  Buffer
 
 //---------------------------------------------------------------------------
 // AIO codes
@@ -443,7 +443,7 @@ module top(
 //---------------------------------------------------------------------------
 // Aliases
 //---------------------------------------------------------------------------
-  wire [17:0] address  = DAL_latched[17:0];
+  wire [19:0] address  = DAL_latched[19:0];
   wire [7:0]  gpcode   = DAL_latched[7:0];
   wire [3:0]  DAL_iack = DAL_latched[3:0];
   wire [2:0]  iack_level; // IRQ level acknowledged
@@ -723,10 +723,10 @@ module top(
   
 //---------------------------------------------------------------------------
 // Bus error
-// read 760000-760077   (for unix v6)
-// read 770200          (for 2.11BSD)
-// read 777700          (for Microdiagnostic test 2)
-// read 772440 (MTSC1)  (for unix v7 tape boot)
+// read 1760000-1760077  (for unix v6)
+// read 3770200          (for 2.11BSD)
+// read 3777700          (for Microdiagnostic test 2)
+// read 3772440 (MTSC1)  (for unix v7 tape boot)
 //---------------------------------------------------------------------------
   reg bus_error = 0;
   integer cnt_abort;
@@ -735,10 +735,10 @@ module top(
 
   always @(posedge sys_clk)
     if (ALE_n == 0 && bus_error == 0 &&
-	(((address       == 18'o770200) & bus_read) || // UNIBUS map register
-	 ((address       == 18'o777700) & bus_read) || // Microdiagnostic test 2
-	 ((address[17:6] == 12'o7600)   & bus_read) || // read 760000-760077
-	 ((address       == 18'o772440) & bus_read 
+	(((address       == 20'o3770200) & bus_read) || // UNIBUS map register
+	 ((address       == 20'o3777700) & bus_read) || // Microdiagnostic test 2
+	 ((address[19:6] == 14'o17600)   & bus_read) || // read 1760000-1760077
+	 ((address       == 20'o3772440) & bus_read 
  	  & ~flag_rt11_workaround))) begin // MTSC1 (TU16)
        cnt_abort <= 1;
        bus_error <= 1;
@@ -752,7 +752,7 @@ module top(
 //---------------------------------------------------------------------------
 // Memory
 //---------------------------------------------------------------------------
-  reg [17:0]	 DAL_latched; // latched DAL[15:0]
+  reg [19:0]	 DAL_latched; // latched DAL[19:0]
   reg [3:0]	 AIO_latched; // latched AIO[3:0]
 //  reg [1:0]	 BS_latched;  // latched BS[1:0]
   
@@ -760,7 +760,7 @@ module top(
 // to latch addresses, AIO codes, BS codes and the MAP control signals.
 // (user's manual 2.4.1)
   always @(negedge ALE_n) begin // latch DAL and AIO
-     DAL_latched <= {DALH[17:16], DAL[15:0]};
+     DAL_latched <= {DALH[19:16], DAL[15:0]};
 
 // for 16bit mode
 //     DAL_latched <= {(DAL[15:12] == 4'o17) ? 2'b11: 2'b00, DAL[15:0]};
@@ -811,24 +811,24 @@ module top(
     mt_busys <= {mt_busys[0], mt_busy};
     
 //---------------------------------------------------------------------------
-// 124KW RAM 
-//   - 000000-757777: RAM
-//   - 760000-760077: No memory (read/write causes bus error)
-//   - 760100-767777: ROM (write causes bus error)
-//   - 770000-777777: ROM and Memory mapped I/O
+// 252KW RAM 
+//   - 0000000-1757777: RAM
+//   - 1760000-1760077: No memory (read/write causes bus error)
+//   - 1760100-1767777: ROM (write causes bus error)
+//   - 3770000-3777777: ROM and Memory mapped I/O
 //---------------------------------------------------------------------------
-// mem_hi and mem_lo have 128KW capacity for fail safe
-  reg [7:0] mem_hi[131071:0]; // higher 8bit (odd byte address)
-  reg [7:0] mem_lo[131071:0]; // lower  8bit (even byte address)
+// mem_hi and mem_lo have 256KW capacity for fail safe
+  reg [7:0] mem_hi[262143:0]; // higher 8bit (odd byte address)
+  reg [7:0] mem_lo[262143:0]; // lower  8bit (even byte address)
 
   reg [15:0] d_cpu_to_ram;
   always @(negedge SCTL_n) // write data from cpu is latched at negedge SCTL_n
     d_cpu_to_ram <= DAL;
 
   // address or data of memory should be latched to infer BSRAM
-  reg [16:0] wa;  // word address for RAM
+  reg [18:0] wa;  // word address for RAM
   always @(negedge sys_clk)
-    wa <= DMA ? dma_address[17:1] : address[17:1];
+    wa <= DMA ? dma_address[17:1] : address[19:1];
 
   wire [15:0] d_ram_to_cpu = {mem_hi[wa], mem_lo[wa]};
   wire [7:0]  d_ram_to_dma = dma_address[0] ? mem_hi[wa]: mem_lo[wa];
@@ -836,8 +836,8 @@ module top(
   wire	we_hi = DMA ? (dma_write &   dma_address[0])  : write_memory_hi;
   wire	we_lo = DMA ? (dma_write & (~dma_address[0])) : write_memory_lo;
 
-  // 760000-777777 is ROM (RAM=124KW)
-  wire	ram_area = (wa[16:12] != 5'b111_11);
+  // 1760000-1777777 is ROM (RAM=252KW)
+  wire	ram_area = (wa[18:12] != 7'b01_111_11);
 
   always @(posedge sys_clk)
     if( ram_area ) begin 
@@ -1145,7 +1145,7 @@ module top(
       pt_read <= 1'b0;
   
   always @(posedge sys_clk) // read tape buffer
-    if( (address[17:1] == (ADRS_PRB>>1)) & bus_read )
+    if( (address[19:1] == (ADRS_PRB>>1)) & bus_read )
       pt_clear_done <= 1'b1;
     else if( ~PRS_DONE )
       pt_clear_done <= 1'b0;
@@ -1923,7 +1923,7 @@ module top(
 //---------------------------------------------------------------------------
 // KW11-L line time clock
 //---------------------------------------------------------------------------
-  parameter   ADRS_KW11L  = 18'o777546;
+  parameter   ADRS_KW11L  = 20'o3777546;
   reg	      REG_KW11L_INT_ENABLE;  // bit 6
   reg	      REG_KW11L_INT_MONITOR; // bit 7
   wire [15:0] REG_KW11L = {8'b0, 
@@ -2173,30 +2173,30 @@ module top(
   assign HALT = reg_HALT_SW | dbg_trg;
 
   reg [15:0] REG_TRACE[23:0];
-  parameter  ADRS_TRACE23 = 18'o777000;
-  parameter  ADRS_TRACE22 = 18'o777002;
-  parameter  ADRS_TRACE21 = 18'o777004;
-  parameter  ADRS_TRACE20 = 18'o777006;
-  parameter  ADRS_TRACE19 = 18'o777010;
-  parameter  ADRS_TRACE18 = 18'o777012;
-  parameter  ADRS_TRACE17 = 18'o777014;
-  parameter  ADRS_TRACE16 = 18'o777016;
-  parameter  ADRS_TRACE15 = 18'o777020;
-  parameter  ADRS_TRACE14 = 18'o777022;
-  parameter  ADRS_TRACE13 = 18'o777024;
-  parameter  ADRS_TRACE12 = 18'o777026;
-  parameter  ADRS_TRACE11 = 18'o777030;
-  parameter  ADRS_TRACE10 = 18'o777032;
-  parameter  ADRS_TRACE9  = 18'o777034;
-  parameter  ADRS_TRACE8  = 18'o777036;
-  parameter  ADRS_TRACE7  = 18'o777040;
-  parameter  ADRS_TRACE6  = 18'o777042;
-  parameter  ADRS_TRACE5  = 18'o777044;
-  parameter  ADRS_TRACE4  = 18'o777046;
-  parameter  ADRS_TRACE3  = 18'o777050;
-  parameter  ADRS_TRACE2  = 18'o777052;
-  parameter  ADRS_TRACE1  = 18'o777054;
-  parameter  ADRS_TRACE0  = 18'o777056;
+  parameter  ADRS_TRACE23 = 20'o3777000;
+  parameter  ADRS_TRACE22 = 20'o3777002;
+  parameter  ADRS_TRACE21 = 20'o3777004;
+  parameter  ADRS_TRACE20 = 20'o3777006;
+  parameter  ADRS_TRACE19 = 20'o3777010;
+  parameter  ADRS_TRACE18 = 20'o3777012;
+  parameter  ADRS_TRACE17 = 20'o3777014;
+  parameter  ADRS_TRACE16 = 20'o3777016;
+  parameter  ADRS_TRACE15 = 20'o3777020;
+  parameter  ADRS_TRACE14 = 20'o3777022;
+  parameter  ADRS_TRACE13 = 20'o3777024;
+  parameter  ADRS_TRACE12 = 20'o3777026;
+  parameter  ADRS_TRACE11 = 20'o3777030;
+  parameter  ADRS_TRACE10 = 20'o3777032;
+  parameter  ADRS_TRACE9  = 20'o3777034;
+  parameter  ADRS_TRACE8  = 20'o3777036;
+  parameter  ADRS_TRACE7  = 20'o3777040;
+  parameter  ADRS_TRACE6  = 20'o3777042;
+  parameter  ADRS_TRACE5  = 20'o3777044;
+  parameter  ADRS_TRACE4  = 20'o3777046;
+  parameter  ADRS_TRACE3  = 20'o3777050;
+  parameter  ADRS_TRACE2  = 20'o3777052;
+  parameter  ADRS_TRACE1  = 20'o3777054;
+  parameter  ADRS_TRACE0  = 20'o3777056;
 
   always @(posedge sys_clk or negedge RESET_n)
     if( ~RESET_n ) begin
@@ -2234,9 +2234,9 @@ module top(
   reg [15:0] REG_DBG1;
   reg [15:0] REG_DBG2;
   reg	     REG_DBG_CP;
-  parameter  ADRS_DBG0   = 18'o777100;
-  parameter  ADRS_DBG1   = 18'o777102;
-  parameter  ADRS_DBG2   = 18'o777104;
+  parameter  ADRS_DBG0   = 20'o3777100;
+  parameter  ADRS_DBG1   = 20'o3777102;
+  parameter  ADRS_DBG2   = 20'o3777104;
   always @(posedge sys_clk or negedge INIT_n)
     if( ~INIT_n ) begin // set dummy addresses
        REG_DBG0 <= 16'o177775;
@@ -2563,7 +2563,7 @@ module top(
 
   reg [15:0] dbg_regt;
   reg [15:0] dbg_regw;
-  reg [17:0] dbg_reg0;
+  reg [19:0] dbg_reg0;
   reg [17:0] dbg_reg1;
   reg [17:0] dbg_reg2;
   reg [17:0] dbg_reg3;
@@ -2699,7 +2699,7 @@ module top(
     if ( dbg_clear )
       dbg_print <= 0;
     else if (dbg_print == 1'b0)
-      if ((address == 18'o773000) & aio_iread ) begin
+      if ((address == 20'o3773000) & aio_iread ) begin
 	 dbg_regw <= "bt";
 	 dbg_reg0 <= address;
 	 dbg_reg1 <= 0;

@@ -93,7 +93,7 @@ IO_LOC "sd2_clk"   C22; IO_PORT "sd2_clk"   PULL_MODE=NONE IO_TYPE=LVCMOS33;
 
 // pmod1 for debug
 // +-----+-----+--------+--------+--------+--------+
-// | 3V3 | GND |LED_RGB |   NC   |   NC   |   NC   |
+// | 3V3 | GND |LED_RGB |   NC   |DALH[19]|DALH[18]|
 // +-----+-----+--------+--------+--------+--------+
 // | 3V3 | GND |   NC   |   NC   |   NC   | LOG_TX |
 // +-----+-----+--------+--------+--------+--------+
@@ -103,6 +103,11 @@ IO_LOC "LED_RGB" E21; IO_PORT "LED_RGB" PULL_MODE=NONE IO_TYPE=LVCMOS33;
 //
 // DCJ11 pins
 //
+
+// pmod1
+IO_LOC "DALH[18]" W19; IO_PORT  "DALH[18]" PULL_MODE=NONE IO_TYPE=LVCMOS33;//01
+IO_LOC "DALH[19]" F19; IO_PORT  "DALH[19]" PULL_MODE=NONE IO_TYPE=LVCMOS33;//03
+
 // SDRAM1 CONN 1, 3, 5, ..., 39 // R19 is a "CPU" pin
 IO_LOC "DAL[6]"   R19; IO_PORT  "DAL[6]"   PULL_MODE=NONE IO_TYPE=LVCMOS33;//01
 IO_LOC "DAL[7]"   U21; IO_PORT  "DAL[7]"   PULL_MODE=NONE IO_TYPE=LVCMOS33;//03
