@@ -705,6 +705,7 @@ module top(
        (address == ADRS_TRACE21) ? REG_TRACE[21]:
        (address == ADRS_TRACE22) ? REG_TRACE[22]:
        (address == ADRS_TRACE23) ? REG_TRACE[23]:
+       (address[19:12] == 8'o377) ? rom[wa[11:0]]:
        d_ram_to_cpu;
   
 //---------------------------------------------------------------------------
@@ -723,7 +724,7 @@ module top(
   
 //---------------------------------------------------------------------------
 // Bus error
-// read 1760000-1760077  (for unix v6)
+// read 2400000-2400077  (for unix v6)
 // read 3770200          (for 2.11BSD)
 // read 3777700          (for Microdiagnostic test 2)
 // read 3772440 (MTSC1)  (for unix v7 tape boot)
@@ -737,7 +738,7 @@ module top(
     if (ALE_n == 0 && bus_error == 0 &&
 	(((address       == 20'o3770200) & bus_read) || // UNIBUS map register
 	 ((address       == 20'o3777700) & bus_read) || // Microdiagnostic test 2
-	 ((address[19:6] == 14'o17600)   & bus_read) || // read 1760000-1760077
+	 ((address[19:6] == 14'o24000)   & bus_read) || // read 2400000-2400077
 	 ((address       == 20'o3772440) & bus_read 
  	  & ~flag_rt11_workaround))) begin // MTSC1 (TU16)
        cnt_abort <= 1;
@@ -811,15 +812,15 @@ module top(
     mt_busys <= {mt_busys[0], mt_busy};
     
 //---------------------------------------------------------------------------
-// 252KW RAM 
-//   - 0000000-1757777: RAM
-//   - 1760000-1760077: No memory (read/write causes bus error)
-//   - 1760100-1767777: ROM (write causes bus error)
+// 320KW RAM 
+//   - 0000000-2377777: RAM
+//   - 2400000-2400077: No memory (read/write causes bus error)
+//   - 3760100-3767777: ROM (write causes bus error)
 //   - 3770000-3777777: ROM and Memory mapped I/O
 //---------------------------------------------------------------------------
-// mem_hi and mem_lo have 256KW capacity for fail safe
-  reg [7:0] mem_hi[262143:0]; // higher 8bit (odd byte address)
-  reg [7:0] mem_lo[262143:0]; // lower  8bit (even byte address)
+  reg [7:0]  mem_hi[327679:0]; // higher 8bit (odd byte address)
+  reg [7:0]  mem_lo[327679:0]; // lower  8bit (even byte address)
+  reg [15:0] rom[2047:0];      // 4KB, 16bit ROM
 
   reg [15:0] d_cpu_to_ram;
   always @(negedge SCTL_n) // write data from cpu is latched at negedge SCTL_n
@@ -836,8 +837,8 @@ module top(
   wire	we_hi = DMA ? (dma_write &   dma_address[0])  : write_memory_hi;
   wire	we_lo = DMA ? (dma_write & (~dma_address[0])) : write_memory_lo;
 
-  // 1760000-1777777 is ROM (RAM=252KW)
-  wire	ram_area = (wa[18:12] != 7'b01_111_11);
+  // 0000000-2377777 is RAM (640KB)
+  wire	ram_area = wa < 19'o1200000;
 
   always @(posedge sys_clk)
     if( ram_area ) begin 
