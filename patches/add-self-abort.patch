@@ -1,0 +1,26 @@
+diff --git a/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v b/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v
+index 4133bd9..e4a4380 100644
+--- a/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v
++++ b/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v
+@@ -2219,6 +2219,13 @@ module top(
+ 	default:;
+       endcase
+   
++  always @(posedge sys_clk or negedge INIT_n)
++    if( ~INIT_n )
++      dbg_trg <= 1'b0;
++    else if(negedge_SCTL_n & bus_write && address == 18'o777200)
++      dbg_trg <= 1'b1; 
++
++/* -----\/----- EXCLUDED -----\/-----
+   always @(posedge sys_clk or negedge RESET_n)
+     if( ~RESET_n )
+       {REG_DBG_CP, dbg_trg} <= 0;
+@@ -2230,6 +2237,7 @@ module top(
+       REG_DBG_CP <= 1'b1;
+     else if( (address[15:0] == REG_DBG2) & aio_iread  & REG_DBG_CP)
+       dbg_trg <= 1'b1;
++ -----/\----- EXCLUDED -----/\----- */
+ //    else if( (address == 16'o001040) & aio_iread ) // trap at 'panic:'
+ //      dbg_trg <= 1'b1;
+ //  else if( (dpwa == (16'o25246 >> 1)) & (we0_lo | we0_hi |we1_lo | we1_hi))
