@@ -18,6 +18,8 @@ This document is written mostly in Japanese. If necessary, please use a translat
     - RK(unix v1): 773700
     - RP(unix v6, RT-11等): 773010
   - 説明文書を[doc/](./doc/)にまとめました．まだログファイルそのままだったりソースのコメントのコピペばかりですが，動かすのに必要な情報は揃っていると思います．気が向いたらもう少し書き直します．
+- 2026/03/23
+  - 2.9BSDが起動しなくなる現象があり、試行錯誤の末、top.vの174行目、SD_MEM_FRQ   = 1000_000 を SD_MEM_FRQ   = 800_000にすることで起動するようになりました。(参考まで)
 
 ## 主要なファイル一覧
 ```
