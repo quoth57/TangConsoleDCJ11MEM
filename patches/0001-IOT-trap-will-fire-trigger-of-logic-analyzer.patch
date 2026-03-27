@@ -1,0 +1,42 @@
+From ce9e59a3449a862659b3f5715116cbe68c4f06ae Mon Sep 17 00:00:00 2001
+From: Takao Shinohara <anakha@f7.dion.ne.jp>
+Date: Sat, 21 Mar 2026 11:32:48 +0900
+Subject: [PATCH] IOT trap will fire trigger of logic analyzer.
+
+---
+ sys/pdp/mch_trap.s | 5 +++++
+ sys/pdp/scb.s      | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/sys/pdp/mch_trap.s b/sys/pdp/mch_trap.s
+index 974666e..2f413e2 100644
+--- a/sys/pdp/mch_trap.s
++++ b/sys/pdp/mch_trap.s
+@@ -247,6 +247,11 @@ trap2:
+ 	jsr	r0,call1; jmp _trap	/ and let call take us in to _trap ...
+ 	/*NOTREACHED*/
+ 
++ASENTRY(trigger)
++	mov	$1,SSR0			/ re-enable relocation
++	mov	$1,177200		/ fire trigger of logic analyzer
++	halt
++	/*NOTREACHED*/
+ 
+ /*
+  * We branch here when we take a trap and find that the variable nofault is
+diff --git a/sys/pdp/scb.s b/sys/pdp/scb.s
+index 8a06ddc..05990ea 100644
+--- a/sys/pdp/scb.s
++++ b/sys/pdp/scb.s
+@@ -83,7 +83,7 @@ SETDOT(4)				/* trap vectors */
+ #ifdef INET
+ 	TRAP(iothndlr,	br7+T_IOTTRAP)	/* network uses iot */
+ #else
+-	TRAP(trap,	br7+T_IOTTRAP)	/* iot trap */
++	TRAP(trigger,	br7+T_IOTTRAP)	/* iot trap */
+ #endif
+ 	TRAP(powrdown,	br7+T_POWRFAIL)	/* power fail */
+ 	TRAP(emt,	br7+T_EMTTRAP)	/* emulator trap */
+-- 
+2.34.1
+
