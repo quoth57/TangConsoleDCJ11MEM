@@ -1,14 +1,16 @@
 diff --git a/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v b/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v
-index 4133bd9..e4a4380 100644
+index 4133bd9..c3eb95d 100644
 --- a/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v
 +++ b/hdl/20251017/TangConsoleDCJ11MEM_project/src/top.v
-@@ -2219,6 +2219,13 @@ module top(
+@@ -2219,6 +2219,15 @@ module top(
  	default:;
        endcase
    
 +  always @(posedge sys_clk or negedge INIT_n)
 +    if( ~INIT_n )
 +      dbg_trg <= 1'b0;
++    else if( address == ADRS_XCSR) // negate HALT when console ODT starts
++      dbg_trg <= 0; 
 +    else if(negedge_SCTL_n & bus_write && address == 18'o777200)
 +      dbg_trg <= 1'b1; 
 +
@@ -16,7 +18,7 @@ index 4133bd9..e4a4380 100644
    always @(posedge sys_clk or negedge RESET_n)
      if( ~RESET_n )
        {REG_DBG_CP, dbg_trg} <= 0;
-@@ -2230,6 +2237,7 @@ module top(
+@@ -2230,6 +2239,7 @@ module top(
        REG_DBG_CP <= 1'b1;
      else if( (address[15:0] == REG_DBG2) & aio_iread  & REG_DBG_CP)
        dbg_trg <= 1'b1;
