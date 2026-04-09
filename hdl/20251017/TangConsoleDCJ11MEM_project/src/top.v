@@ -454,8 +454,8 @@ module top(
 		      (DAL_iack == 4'b1000) ? 3'd7: // IRQ3
 		      0;
 			 
-  wire bus_read           = (aio_read  && (BUFCTL_n == 1'b0));
-  wire bus_write          = (aio_write && (BUFCTL_n == 1'b1));
+  wire bus_read           = (aio_read  && (BUFCTL_n == 1'b0) && (ABORT_latched == 1'b1));
+  wire bus_write          = (aio_write && (BUFCTL_n == 1'b1) && (ABORT_latched == 1'b1));
   wire vec_read           = (aio_code == AIO_INTACK) & (BUFCTL_n == 1'b0);
   
   wire [3:0] aio_code     = AIO_latched;
@@ -603,7 +603,7 @@ module top(
 //---------------------------------------------------------------------------
 // Memory and IO
 //---------------------------------------------------------------------------
-  assign DAL = BUFCTL_n ? 16'bzzzz_zzzz_zzzz_zzzz :
+  assign DAL = (ABORT_latched == 1'b0) || BUFCTL_n ? 16'bzzzz_zzzz_zzzz_zzzz :	// we should ignore aborted bus cycle
        (address == ADRS_RCSR) ? {8'b0, RCSR_DONE, RCSR_ID, 6'b0}:
        (address == ADRS_RBUF) ? {8'b0, RBUF}:
        (address == ADRS_XCSR) ? {8'b0, XCSR_READY, XCSR_ID, 6'b0}:
@@ -755,6 +755,7 @@ module top(
 //---------------------------------------------------------------------------
   reg [19:0]	 DAL_latched; // latched DAL[19:0]
   reg [3:0]	 AIO_latched; // latched AIO[3:0]
+  reg		 ABORT_latched; // latched ABORT_n
 //  reg [1:0]	 BS_latched;  // latched BS[1:0]
   
 // The leading edge of ALE is typically used by external logic
@@ -767,6 +768,7 @@ module top(
 //     DAL_latched <= {(DAL[15:12] == 4'o17) ? 2'b11: 2'b00, DAL[15:0]};
 
      AIO_latched <= AIO;
+     ABORT_latched <= ABORT_n;
 //     BS_latched  <= BS;
   end
   
@@ -841,12 +843,13 @@ module top(
   wire	ram_area = wa < 19'o1200000;
 
   always @(posedge sys_clk)
-    if( ram_area ) begin 
-       if(we_lo) // dma data is 8bit 
-	 mem_lo[wa] <= DMA ? d_dma_to_ram[7:0] : d_cpu_to_ram[7:0];
-       if(we_hi)
-	 mem_hi[wa] <= DMA ? d_dma_to_ram[7:0] : d_cpu_to_ram[15:8];
-    end
+    if (ABORT_latched == 1'b1)	// we should ignore aborted bus cycle
+      if( ram_area ) begin 
+	 if(we_lo) // dma data is 8bit 
+	   mem_lo[wa] <= DMA ? d_dma_to_ram[7:0] : d_cpu_to_ram[7:0];
+	 if(we_hi)
+	   mem_hi[wa] <= DMA ? d_dma_to_ram[7:0] : d_cpu_to_ram[15:8];
+      end
   
 //---------------------------------------------------------------------------
 // ROM DATA
