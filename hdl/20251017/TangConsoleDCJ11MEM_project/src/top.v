@@ -170,8 +170,8 @@ module top(
   
   // clock for sdhd and sdtape
   parameter	 SD_SYS_FRQ   = SYS_CLK_FRQ;
-  parameter	 SD_MEM_FRQ   =1000_000;
-//  parameter	 SD_MEM_FRQ   = 800_000;
+//  parameter	 SD_MEM_FRQ   =1000_000;
+  parameter	 SD_MEM_FRQ   = 800_000;
 //  parameter	 SD_MEM_FRQ   = 400_000;
   wire		 sd_sys_clk   = sys_clk;
 
