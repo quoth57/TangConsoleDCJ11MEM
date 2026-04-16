@@ -843,7 +843,7 @@ module top(
   wire	ram_area = wa < 19'o1200000;
 
   always @(posedge sys_clk)
-    if (ABORT_latched == 1'b1)	// we should ignore aborted bus cycle
+    if (DMA || ABORT_latched == 1'b1)	// we should ignore aborted bus cycle
       if( ram_area ) begin 
 	 if(we_lo) // dma data is 8bit 
 	   mem_lo[wa] <= DMA ? d_dma_to_ram[7:0] : d_cpu_to_ram[7:0];
