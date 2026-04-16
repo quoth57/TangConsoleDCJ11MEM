@@ -1,0 +1,19 @@
+commit c6d8fad3e9316c74b02e40eab09442d38715c77d
+Author: Takao Shinohara <anakha@f7.dion.ne.jp>
+Date:   Fri Apr 17 05:23:20 2026 +0900
+
+    'count' can be >= 32768
+
+diff --git a/sys/pdp/machdep.c b/sys/pdp/machdep.c
+index 7c81698..13bf96c 100644
+--- a/sys/pdp/machdep.c
++++ b/sys/pdp/machdep.c
+@@ -322,7 +322,7 @@ sofub_alloc(bp)
+ register struct buf *bp;
+ 	{
+ 	register int s;
+-	register int count;
++	u_short count;
+ 	size_t uaddr;
+ 	memaddr sbase;
+ 
